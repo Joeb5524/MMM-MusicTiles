@@ -4,7 +4,7 @@
   "description": "Touch-friendly music tiles with upload UI for carers/users.",
   "main": "MMM-MusicTiles.js",
   "dependencies": {
-    "multer": "^1.4.5-lts.1",
+    "multer": "2.0.2",
     "uuid": "^9.0.1"
   }
 }
