@@ -1,0 +1,73 @@
+
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: #0f1115;
+  color: #e9eef7;
+}
+.wrap { max-width: 980px; margin: 0 auto; padding: 24px; }
+.hdr h1 { margin: 0; font-size: 28px; }
+.sub { margin: 8px 0 0; opacity: 0.8; }
+
+.card {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+.card h2 { margin: 0 0 14px; font-size: 18px; }
+
+.row { display: grid; gap: 8px; margin-bottom: 12px; }
+label { font-size: 13px; opacity: 0.9; }
+input[type="text"], select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.25);
+  color: #e9eef7;
+}
+input[type="file"] { width: 100%; }
+
+.hint { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+
+.actions { display: flex; align-items: center; gap: 12px; }
+button {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.12);
+  color: #e9eef7;
+  cursor: pointer;
+}
+button:hover { background: rgba(255,255,255,0.18); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.status { font-size: 13px; opacity: 0.85; }
+
+.list { display: grid; gap: 10px; }
+.item {
+  display: grid;
+  grid-template-columns: 62px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+}
+.thumb {
+  width: 62px; height: 62px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: rgba(255,255,255,0.06);
+}
+.meta .t { font-size: 15px; }
+.meta .m { font-size: 12px; opacity: 0.75; margin-top: 4px; text-transform: capitalize; }
+.meta .id { font-size: 11px; opacity: 0.6; margin-top: 4px; }
+
+.ftr { margin-top: 18px; opacity: 0.7; font-size: 12px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 6px; }

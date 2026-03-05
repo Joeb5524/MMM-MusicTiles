@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Music Tiles</title>
+  <link rel="stylesheet" href="/modules/MMM-MusicTiles/admin.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="hdr">
+      <h1>Music Tiles</h1>
+      <p class="sub">Upload a track + optional cover image. Tiles update instantly on the mirror.</p>
+    </header>
+
+    <section class="card">
+      <h2>Add track</h2>
+      <form id="uploadForm">
+        <div class="row">
+          <label>Track name</label>
+          <input name="title" id="title" type="text" placeholder="e.g. Calming music" required />
+        </div>
+
+        <div class="row">
+          <label>Mood (optional)</label>
+          <select name="mood" id="mood">
+            <option value="">—</option>
+            <option value="calm">Calm</option>
+            <option value="morning">Morning</option>
+            <option value="exercise">Exercise</option>
+            <option value="sleep">Sleep</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <label>Audio file</label>
+          <input name="audio" id="audio" type="file" accept=".mp3,.m4a,.wav,.ogg,audio/*" required />
+          <div class="hint">Max 25MB. Supported: mp3, m4a, wav, ogg.</div>
+        </div>
+
+        <div class="row">
+          <label>Cover image (optional)</label>
+          <input name="cover" id="cover" type="file" accept=".jpg,.jpeg,.png,.webp,image/*" />
+        </div>
+
+        <div class="actions">
+          <button id="uploadBtn" type="submit">Upload</button>
+          <span id="status" class="status"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Existing tracks</h2>
+      <div id="list" class="list"></div>
+    </section>
+
+    <footer class="ftr">
+      <div>Open mirror: <code>/mm-music</code></div>
+      <div>Track files stored in: <code>modules/MMM-MusicTiles/public/uploads</code></div>
+    </footer>
+  </div>
+
+  <script src="/modules/MMM-MusicTiles/admin.js"></script>
+</body>
+</html>
