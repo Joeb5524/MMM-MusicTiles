@@ -1,0 +1,10 @@
+{
+  "name": "MMM-MusicTiles",
+  "version": "0.1.0",
+  "description": "Touch-friendly music tiles with upload UI for carers/users.",
+  "main": "MMM-MusicTiles.js",
+  "dependencies": {
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^9.0.1"
+  }
+}
