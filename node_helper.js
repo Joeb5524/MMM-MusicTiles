@@ -57,7 +57,7 @@ module.exports = NodeHelper.create({
         const ext = path.extname(file.originalname || "").toLowerCase();
 
         if (file.fieldname === "audio") {
-          const ok = [".mp3", ".m4a", ".wav", ".ogg"].includes(ext);
+          const ok = [".mp3", ".m4a", ".wav", ".ogg", ".flac"].includes(ext);
           return cb(ok ? null : new Error("Unsupported audio type"), ok);
         }
 
