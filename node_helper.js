@@ -51,7 +51,7 @@ module.exports = NodeHelper.create({
         }
       }),
       limits: {
-        fileSize: 25 * 1024 * 1024 // 25MB
+        fileSize: 50 * 1024 * 1024 // 50MB
       },
       fileFilter: (req, file, cb) => {
         const ext = path.extname(file.originalname || "").toLowerCase();

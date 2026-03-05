@@ -1,4 +1,3 @@
-
 async function fetchJson(url, opts) {
   const res = await fetch(url, opts);
   const data = await res.json().catch(() => ({}));
@@ -66,6 +65,37 @@ async function loadList() {
   }
 }
 
+// progress using XHR fetch is inconsistent
+
+function uploadWithProgress(url, formData, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+
+
+    xhr.timeout = 5 * 60 * 1000; // 5 minutes
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && typeof onProgress === "function") {
+        const pct = Math.round((e.loaded / e.total) * 100);
+        onProgress(pct, e.loaded, e.total);
+      }
+    };
+
+    xhr.onload = () => {
+      let data = {};
+      try { data = JSON.parse(xhr.responseText || "{}"); } catch (_) {}
+      if (xhr.status >= 200 && xhr.status < 300) return resolve(data);
+      reject(new Error(data.error || ("HTTP " + xhr.status)));
+    };
+
+    xhr.ontimeout = () => reject(new Error("Upload timed out"));
+    xhr.onerror = () => reject(new Error("Network error during upload"));
+
+    xhr.send(formData);
+  });
+}
+
 document.getElementById("uploadForm").addEventListener("submit", async (ev) => {
   ev.preventDefault();
 
@@ -86,10 +116,13 @@ document.getElementById("uploadForm").addEventListener("submit", async (ev) => {
   if (cover) fd.append("cover", cover);
 
   btn.disabled = true;
-  status.textContent = "Uploading…";
+  status.textContent = "Uploading… 0%";
 
   try {
-    await fetchJson("/mmm-music/api/tracks", { method: "POST", body: fd });
+    await uploadWithProgress("/mmm-music/api/tracks", fd, (pct) => {
+      status.textContent = `Uploading… ${pct}%`;
+    });
+
     status.textContent = "Uploaded ✓";
     document.getElementById("audio").value = "";
     document.getElementById("cover").value = "";
