@@ -1,4 +1,4 @@
-
+/* MMM-MusicTiles node_helper.js */
 const NodeHelper = require("node_helper");
 const path = require("path");
 const fs = require("fs");
@@ -70,7 +70,91 @@ module.exports = NodeHelper.create({
       }
     });
 
+    const app = this.expressApp;
+    if (!app) {
+      console.log("[MMM-MusicTiles] ERROR: expressApp not available (routes not mounted)");
+      return;
+    }
+
+    // Admin page
+    app.get("/mmm-music", (req, res) => {
+      res.sendFile(path.join(this.publicDir, "admin.html"));
+    });
+    app.get("/mmm-music/", (req, res) => {
+      res.sendFile(path.join(this.publicDir, "admin.html"));
+    });
+
+
+    app.get("/mmm-music/api/tracks", async (req, res) => {
+      await this._loadTracks();
+      res.json({ ok: true, tracks: this.tracks });
+    });
+
+    app.post(
+        "/mmm-music/api/tracks",
+        this.upload.fields([{ name: "audio", maxCount: 1 }, { name: "cover", maxCount: 1 }]),
+        async (req, res) => {
+          try {
+            const title = String((req.body && req.body.title) ? req.body.title : "").trim();
+            const mood = String((req.body && req.body.mood) ? req.body.mood : "").trim();
+
+            const audioFile =
+                req.files && req.files.audio && req.files.audio[0]
+                    ? req.files.audio[0].filename
+                    : null;
+
+            if (!audioFile) return res.status(400).json({ ok: false, error: "Missing audio file" });
+
+            const coverFile =
+                req.files && req.files.cover && req.files.cover[0]
+                    ? req.files.cover[0].filename
+                    : null;
+
+            const track = {
+              id: uuidv4(),
+              title: title || "Untitled",
+              mood: mood || "",
+              file: audioFile,
+              cover: coverFile || ""
+            };
+
+            await this._loadTracks();
+            this.tracks.unshift(track);
+            await this._saveTracks();
+
+            this._broadcastTracks();
+            res.json({ ok: true, track });
+          } catch (e) {
+            console.log("[MMM-MusicTiles] upload error:", e && e.message ? e.message : e);
+            res.status(500).json({ ok: false, error: "Upload failed" });
+          }
+        }
+    );
+
+    app.delete("/mmm-music/api/tracks/:id", async (req, res) => {
+      const id = String(req.params.id || "");
+      await this._loadTracks();
+
+      const idx = this.tracks.findIndex((t) => String(t.id) === id);
+      if (idx === -1) return res.status(404).json({ ok: false, error: "Not found" });
+
+      const t = this.tracks[idx];
+      this.tracks.splice(idx, 1);
+      await this._saveTracks();
+
+      if (t && t.file) {
+        try { await fsp.unlink(path.join(this.uploadDir, safeBaseName(t.file))); } catch (_) {}
+      }
+      if (t && t.cover) {
+        try { await fsp.unlink(path.join(this.coverDir, safeBaseName(t.cover))); } catch (_) {}
+      }
+
+      this._broadcastTracks();
+      res.json({ ok: true });
+    });
+
     console.log("[MMM-MusicTiles] started");
+    console.log("[MMM-MusicTiles] routes mounted at /mmm-music");
   },
 
   _ensureDirs() {
@@ -95,75 +179,5 @@ module.exports = NodeHelper.create({
     if (notification === "MMMT_INIT") {
       this._broadcastTracks();
     }
-  },
-
-  expressRoutes(app) {
-    app.get("/mmm-music", (req, res) => {
-      res.sendFile(path.join(this.publicDir, "admin.html"));
-    });
-
-    app.get("/mmm-music/", (req, res) => {
-      res.sendFile(path.join(this.publicDir, "admin.html"));
-    });
-
-    app.get("/mmm-music/api/tracks", async (req, res) => {
-      await this._loadTracks();
-      res.json({ ok: true, tracks: this.tracks });
-    });
-
-    app.post(
-      "/mmm-music/api/tracks",
-      this.upload.fields([{ name: "audio", maxCount: 1 }, { name: "cover", maxCount: 1 }]),
-      async (req, res) => {
-        try {
-          const title = String((req.body && req.body.title) ? req.body.title : "").trim();
-          const mood = String((req.body && req.body.mood) ? req.body.mood : "").trim();
-
-          const audioFile = req.files && req.files.audio && req.files.audio[0] ? req.files.audio[0].filename : null;
-          if (!audioFile) return res.status(400).json({ ok: false, error: "Missing audio file" });
-
-          const coverFile = req.files && req.files.cover && req.files.cover[0] ? req.files.cover[0].filename : null;
-
-          const track = {
-            id: uuidv4(),
-            title: title || "Untitled",
-            mood: mood || "",
-            file: audioFile,
-            cover: coverFile || ""
-          };
-
-          await this._loadTracks();
-          this.tracks.unshift(track);
-          await this._saveTracks();
-
-          this._broadcastTracks();
-          res.json({ ok: true, track });
-        } catch (e) {
-          console.log("[MMM-MusicTiles] upload error:", e && e.message ? e.message : e);
-          res.status(500).json({ ok: false, error: "Upload failed" });
-        }
-      }
-    );
-
-    app.delete("/mmm-music/api/tracks/:id", async (req, res) => {
-      const id = String(req.params.id || "");
-      await this._loadTracks();
-      const idx = this.tracks.findIndex((t) => String(t.id) === id);
-      if (idx === -1) return res.status(404).json({ ok: false, error: "Not found" });
-
-      const t = this.tracks[idx];
-      this.tracks.splice(idx, 1);
-      await this._saveTracks();
-
-      if (t && t.file) {
-        try { await fsp.unlink(path.join(this.uploadDir, safeBaseName(t.file))); } catch (_) {}
-      }
-      if (t && t.cover) {
-        try { await fsp.unlink(path.join(this.coverDir, safeBaseName(t.cover))); } catch (_) {}
-      }
-
-      this._broadcastTracks();
-      res.json({ ok: true });
-    });
   }
 });
