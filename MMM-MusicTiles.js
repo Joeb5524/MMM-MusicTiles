@@ -82,12 +82,12 @@ Module.register("MMM-MusicTiles", {
 
   _trackUrl(t) {
     if (!t || !t.file) return "";
-    return `/modules/MMM-MusicTiles/uploads/${encodeURIComponent(t.file)}`;
+    return `/modules/MMM-MusicTiles/public/uploads/${encodeURIComponent(t.file)}`;
   },
 
   _coverUrl(t) {
-    if (t && t.cover) return `/modules/MMM-MusicTiles/covers/${encodeURIComponent(t.cover)}`;
-    return `/modules/MMM-MusicTiles/default-cover.svg`;
+    if (t && t.cover) return `/modules/MMM-MusicTiles/public/covers/${encodeURIComponent(t.cover)}`;
+    return `/modules/MMM-MusicTiles/public/default-cover.svg`;
   },
 
   _playById(id) {

@@ -7,8 +7,8 @@ async function fetchJson(url, opts) {
 }
 
 function coverUrl(t) {
-  if (t.cover) return "/modules/MMM-MusicTiles/covers/" + encodeURIComponent(t.cover);
-  return "/modules/MMM-MusicTiles/default-cover.svg";
+  if (t.cover) return "/modules/MMM-MusicTiles/public/covers/" + encodeURIComponent(t.cover);
+  return "/modules/MMM-MusicTiles/public/default-cover.svg";
 }
 
 function el(tag, cls, text) {
