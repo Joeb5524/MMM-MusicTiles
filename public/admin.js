@@ -22,7 +22,7 @@ async function loadList() {
   const list = document.getElementById("list");
   list.innerHTML = "Loading…";
 
-  const data = await fetchJson("/mm-music/api/tracks");
+  const data = await fetchJson("/mmm-music/api/tracks");
   const tracks = Array.isArray(data.tracks) ? data.tracks : [];
 
   list.innerHTML = "";
