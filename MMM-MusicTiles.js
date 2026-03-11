@@ -17,8 +17,8 @@ Module.register("MMM-MusicTiles", {
     this.audio = new Audio();
     this.audio.preload = "none";
     this.audio.volume = (typeof this.config.defaultVolume === "number")
-      ? Math.max(0, Math.min(1, this.config.defaultVolume))
-      : 0.7;
+        ? Math.max(0, Math.min(1, this.config.defaultVolume))
+        : 0.7;
 
     this.audio.addEventListener("ended", () => {
       this.activeId = null;
@@ -26,7 +26,6 @@ Module.register("MMM-MusicTiles", {
     });
 
     this.audio.addEventListener("pause", () => {
-      // keep activeId if paused
       this.updateDom(0);
     });
 
@@ -60,7 +59,6 @@ Module.register("MMM-MusicTiles", {
       return;
     }
 
-
     if (notification === "MUSIC_STOP") {
       this._stop();
       return;
@@ -74,7 +72,7 @@ Module.register("MMM-MusicTiles", {
       return;
     }
 
-    if (this.config.autoStopOnScreenChange && notification === "ASSIST_SCREEN_SET") {
+    if (this.config.autoStopOnScreenChange && (notification === "ASSIST_SCREEN_SET" || notification === "ASSIST_SCREEN_CHANGED")) {
       const screen = String(payload && payload.screen ? payload.screen : "");
       if (screen && screen !== this.config.screenName) this._stop();
     }
@@ -94,7 +92,6 @@ Module.register("MMM-MusicTiles", {
     const t = this.tracks.find((x) => String(x.id) === String(id));
     if (!t) return;
 
-    // Toggle pause/play on the same track
     if (this.activeId === id) {
       if (this.audio.paused) {
         this.audio.play().catch(() => {});
@@ -116,7 +113,6 @@ Module.register("MMM-MusicTiles", {
   _playByQuery(q) {
     const norm = (x) => String(x || "").toLowerCase();
 
-    // Priority: exact mood match, then title contains, then mood contains
     let t = this.tracks.find((x) => norm(x.mood) === q);
     if (!t) t = this.tracks.find((x) => norm(x.title) === q);
     if (!t) t = this.tracks.find((x) => norm(x.title).includes(q));
@@ -124,7 +120,6 @@ Module.register("MMM-MusicTiles", {
 
     if (t && t.id) this._playById(String(t.id));
   },
-
 
   _stop() {
     try {
@@ -200,7 +195,6 @@ Module.register("MMM-MusicTiles", {
 
     root.appendChild(grid);
 
-    // now-playing hint
     if (this.activeId) {
       const t = this.tracks.find((x) => String(x.id) === String(this.activeId));
       const np = document.createElement("div");
