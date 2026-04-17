@@ -12,17 +12,41 @@
 
 .mmmt-tile {
   all: unset;
+  position: relative;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   border-radius: 18px;
   overflow: hidden;
-  background: rgba(255,255,255,0.06);
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  background: rgba(10,16,24,.72);
   border: 2px solid rgba(255,255,255,0.10);
 }
 
 .mmmt-tile.is-active { border-color: rgba(255,255,255,0.40); }
 .mmmt-tile.is-playing { box-shadow: 0 0 0 2px rgba(255,255,255,0.18) inset; }
+
+.mmmt-tile:hover,
+.mmmt-tile:focus-visible {
+  transform: translateY(-4px);
+  border-color: rgba(105,213,255,.34);
+  box-shadow: 0 18px 36px rgba(0,0,0,.34);
+}
+
+.mmmt-tile.is-playing:hover,
+.mmmt-tile.is-playing:focus-visible {
+  box-shadow: 0 18px 36px rgba(0,0,0,.34), 0 0 0 2px rgba(255,255,255,0.18) inset;
+}
+
+.mmmt-tile.is-playing::after {
+  content: "Playing";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: rgba(106,245,222,.16);
+}
 
 .mmmt-cover {
   width: 100%;
@@ -32,7 +56,10 @@
 }
 
 .mmmt-meta {
-  padding: 10px 12px 12px;
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 16px 14px 14px;
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,.84));
 }
 
 .mmmt-track-title {
